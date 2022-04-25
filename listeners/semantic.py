@@ -3,6 +3,8 @@ from util.exceptions import *
 from antlr.coolListener import coolListener
 from antlr.coolParser import coolParser
 
+operationSymbols = {'+', '-', '*', '/', '%'}
+
 
 class semanticListener(coolListener):
 
@@ -61,6 +63,15 @@ class semanticListener(coolListener):
                         raise letself("'Let self' is a reserved word")
                 if ctx.expr().getChildCount() > 1:
                     for child in ctx.expr().getChildren():
+                        hola = child.getText()
+                        hola = ctx.expr().getChildren()
                         if child.getText() == 'self' or child.getText().split(':')[0] == 'self':
                             raise selfassignment(
                                 "'Self assignment' is a reserved word")
+                        if child.getText() in operationSymbols:
+                            previousChild = ctx.expr().getChild(
+                                ctx.expr().children.index(child) - 1).getText()
+                            nextChild = ctx.expr().getChild(ctx.expr().children.index(child) + 1).getText()
+                            if(not previousChild.isdigit() or not nextChild.isdigit()):
+                                raise badarith(
+                                    "Arithmetic operation between non-numbers")
