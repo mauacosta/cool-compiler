@@ -15,7 +15,7 @@ class semanticListener(coolListener):
 
     def enterKlass(self, ctx: coolParser.KlassContext):
 
-        # Check if inherits is valid🥵🥵
+        # Check if inherits is valid
         if ctx.TYPE(1):
             classInheritance = ctx.TYPE(1).getText()
             if classInheritance == 'Bool':
@@ -27,7 +27,7 @@ class semanticListener(coolListener):
 
         # Check if classname is valid
         if ctx.TYPE(0).getText() == 'SELF_TYPE':
-            raise inheritsselftype("'SELF_TYPE' is a reserved word")
+            raise selftyperedeclared("'SELF_TYPE' is a reserved word")
         if ctx.TYPE(0).getText() == 'Object':
             raise redefinedobject("'Object' is a reserved word")
         if ctx.TYPE(0).getText() == 'Int':
@@ -59,8 +59,8 @@ class semanticListener(coolListener):
                 if ctx.expr().getChild(0).getText() == 'let':
                     if ctx.expr().getChild(1).getText() == 'self' or ctx.expr().getChild(1).getText().split(':')[0] == 'self':
                         raise letself("'Let self' is a reserved word")
-                hola = "hola"
-                if ctx.expr().getChild(ctx.expr().getChildCount() - 1).getText() == 'self' or ctx.expr().getChild(ctx.expr().getChildCount() - 1).getText().split(':')[0] == 'self':
-                    raise selfassignment(
-                        "'Self assignment' is a reserved word"
-                    )
+                if ctx.expr().getChildCount() > 1:
+                    for child in ctx.expr().getChildren():
+                        if child.getText() == 'self' or child.getText().split(':')[0] == 'self':
+                            raise selfassignment(
+                                "'Self assignment' is a reserved word")
