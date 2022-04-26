@@ -1,4 +1,4 @@
-# Generated from /Users/mau/Documents/code/tc3048-202211/cool/antlr/cool.g4 by ANTLR 4.9.2
+# Generated from /Users/mau/Documents/code/cool-compiler/antlr/cool.g4 by ANTLR 4.9.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO

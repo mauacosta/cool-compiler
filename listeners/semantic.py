@@ -49,19 +49,21 @@ class semanticListener(coolListener):
             for param in ctx.params:
                 if param.ID().getText() == 'self' or param.ID().getText() == 'SELF_TYPE':
                     raise selfinformalparameter("'Self' is a reserved word")
-        hola = ctx._formal
+
         if ctx._formal:
             for formal in ctx._formal.children:
                 if formal.getText() == 'self' or formal.getText() == 'SELF_TYPE':
                     raise selftypeparameterposition(
                         "'Self' is a reserved word"
                     )
-        if ctx.TYPE():
-            if ctx.TYPE().getText() == 'SELF_TYPE':
-                raise selftypebadreturn("'SELF_TYPE' is a reserved word")
 
         if ctx.expr():
             if ctx.expr().getChildCount() > 0:
+                if ctx.TYPE():
+                    if ctx.TYPE().getText() == 'SELF_TYPE':
+                        if ctx.expr().getChild(0).getText() != 'self':
+                            raise selftypebadreturn(
+                                "'SELF_TYPE' is a reserved word")
                 if ctx.expr().getChild(0).getText() == 'let':
                     if ctx.expr().getChild(1).getText() == 'self' or ctx.expr().getChild(1).getText().split(':')[0] == 'self':
                         raise letself("'Let self' is a reserved word")
