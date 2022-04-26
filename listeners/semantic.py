@@ -17,8 +17,28 @@ class semanticListener(coolListener):
 
     def __init__(self):
         self.main = False
+        self.actualClass = ""
+        self.actualFeature = ""
 
     def enterKlass(self, ctx: coolParser.KlassContext):
+
+        self.actualClass = ctx.TYPE(0).getText()
+        # Check if classname is valid
+        if self.actualClass == 'SELF_TYPE':
+            raise selftyperedeclared("'SELF_TYPE' is a reserved word")
+        elif self.actualClass == 'Object':
+            raise redefinedobject("'Object' is a reserved word")
+        elif self.actualClass == 'Int':
+            raise badredefineint("'Int' is a reserved word")
+        else:
+            if self.actualClass in self.classDict:
+                raise redefinedclass(
+                    "Class '" + self.actualClass + "' is already defined")
+            else:
+                self.classDict[self.actualClass] = {
+                    "expressions": {}, "inherits": ""}
+                if self.actualClass == 'Main':
+                    self.main = True
 
         # Check if inherits is valid
         if ctx.TYPE(1):
@@ -32,21 +52,9 @@ class semanticListener(coolListener):
             elif classInheritance not in self.classDict:
                 raise missingclass(
                     "Class '" + classInheritance + "' is not defined")
-        # Check if classname is valid
-        if ctx.TYPE(0).getText() == 'SELF_TYPE':
-            raise selftyperedeclared("'SELF_TYPE' is a reserved word")
-        elif ctx.TYPE(0).getText() == 'Object':
-            raise redefinedobject("'Object' is a reserved word")
-        elif ctx.TYPE(0).getText() == 'Int':
-            raise badredefineint("'Int' is a reserved word")
-        elif ctx.TYPE(0).getText() == 'Main':
-            self.main = True
-        else:
-            if ctx.TYPE(0).getText() in self.classDict:
-                raise redefinedclass(
-                    "Class '" + ctx.TYPE(0).getText() + "' is already defined")
             else:
-                self.classDict[ctx.TYPE(0).getText()] = {}
+                self.classDict[self.actualClass
+                               ]['inherits'] = classInheritance
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):
@@ -54,8 +62,14 @@ class semanticListener(coolListener):
 
     def enterFeature(self, ctx: coolParser.FeatureContext):
 
-        if ctx.ID().getText() == 'self':
+        self.actualFeature = ctx.ID().getText()
+
+        if self.actualFeature == 'self':
             raise anattributenamedself("'Self' is a reserved word")
+        else:
+            self.classDict[self.actualClass]['expressions'][self.actualFeature] = {
+                "params": {}}
+
         if ctx.params:
             for param in ctx.params:
                 if param.ID().getText() == 'self' or param.ID().getText() == 'SELF_TYPE':
@@ -67,7 +81,6 @@ class semanticListener(coolListener):
                     raise selftypeparameterposition(
                         "'Self' is a reserved word"
                     )
-
         if ctx.expr():
             if ctx.expr().getChildCount() > 0:
                 if ctx.TYPE():
@@ -75,13 +88,26 @@ class semanticListener(coolListener):
                         if ctx.expr().getChild(0).getText() != 'self':
                             raise selftypebadreturn(
                                 "'SELF_TYPE' is a reserved word")
-                if ctx.expr().getChild(0).getText() == 'let':
-                    if ctx.expr().getChild(1).getText() == 'self' or ctx.expr().getChild(1).getText().split(':')[0] == 'self':
+                    self.classDict[self.actualClass]['expressions'][self.actualFeature]['type'] = ctx.TYPE(
+                    ).getText()
+
+                if ctx.expr().let_decl():
+                    let_params = ctx.expr().let_decl(0)
+                    if let_params.ID().getText() == 'self' or let_params.TYPE().getText() == 'self':
                         raise letself("'Let self' is a reserved word")
+                    else:
+                        self.classDict[self.actualClass]['expressions'][self.actualFeature]['params'][let_params.ID(
+                        ).getText()] = {'TYPE': let_params.TYPE().getText(), 'VALUE': let_params.expr()}
+                    let_in = ctx.expr().getChild(ctx.expr().getChildCount() - 1)
+                    if let_in and let_in.getText().split('.')[1]:
+                        let_method = let_in.getText().split('.')[1]
+                        methodType = self.classDict[self.actualClass]['expressions'][self.actualFeature]['params'][let_params.ID(
+                        ).getText()]['TYPE']
+                        if let_method not in self.classDict[methodType]['expressions']:
+                            raise(baddispatch("Tas mal chavito"))
+
                 if ctx.expr().getChildCount() > 1:
                     for child in ctx.expr().getChildren():
-                        hola = child.getText()
-                        hola = ctx.expr().getChildren()
                         if child.getText() == 'self' or child.getText().split(':')[0] == 'self':
                             raise selfassignment(
                                 "'Self assignment' is a reserved word")
