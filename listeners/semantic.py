@@ -42,7 +42,7 @@ class semanticListener(coolListener):
             raise nomain()
 
     def enterFeature(self, ctx: coolParser.FeatureContext):
-        hola = ctx.ID().getText()
+
         if ctx.ID().getText() == 'self':
             raise anattributenamedself("'Self' is a reserved word")
         if ctx.params:
@@ -56,6 +56,10 @@ class semanticListener(coolListener):
                     raise selftypeparameterposition(
                         "'Self' is a reserved word"
                     )
+        if ctx.TYPE():
+            if ctx.TYPE().getText() == 'SELF_TYPE':
+                raise selftypebadreturn("'SELF_TYPE' is a reserved word")
+
         if ctx.expr():
             if ctx.expr().getChildCount() > 0:
                 if ctx.expr().getChild(0).getText() == 'let':
