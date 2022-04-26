@@ -12,6 +12,9 @@ class semanticListener(coolListener):
 
     prohibitedInheritence = ['String', 'Bool', 'SELF_TYPE']
 
+    def enterProgram(self, ctx: coolParser.ProgramContext):
+        self.classDict = {}
+
     def __init__(self):
         self.main = False
 
@@ -22,20 +25,28 @@ class semanticListener(coolListener):
             classInheritance = ctx.TYPE(1).getText()
             if classInheritance == 'Bool':
                 raise inheritsbool("'Bool' is a reserved word")
-            if classInheritance == 'String':
+            elif classInheritance == 'String':
                 raise inheritsstring("'String' is a reserved word")
-            if classInheritance == 'SELF_TYPE':
+            elif classInheritance == 'SELF_TYPE':
                 raise inheritsselftype("'SELF_TYPE' is a reserved word")
-
+            elif classInheritance not in self.classDict:
+                raise missingclass(
+                    "Class '" + classInheritance + "' is not defined")
         # Check if classname is valid
         if ctx.TYPE(0).getText() == 'SELF_TYPE':
             raise selftyperedeclared("'SELF_TYPE' is a reserved word")
-        if ctx.TYPE(0).getText() == 'Object':
+        elif ctx.TYPE(0).getText() == 'Object':
             raise redefinedobject("'Object' is a reserved word")
-        if ctx.TYPE(0).getText() == 'Int':
+        elif ctx.TYPE(0).getText() == 'Int':
             raise badredefineint("'Int' is a reserved word")
-        if ctx.TYPE(0).getText() == 'Main':
+        elif ctx.TYPE(0).getText() == 'Main':
             self.main = True
+        else:
+            if ctx.TYPE(0).getText() in self.classDict:
+                raise redefinedclass(
+                    "Class '" + ctx.TYPE(0).getText() + "' is already defined")
+            else:
+                self.classDict[ctx.TYPE(0).getText()] = {}
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):
