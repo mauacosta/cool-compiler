@@ -130,6 +130,16 @@ class semanticListener(coolListener):
                         if let_method not in self.classDict[methodType]['expressions']:
                             raise(baddispatch("Tan mal chavitos :0"))
 
+                if ctx.expr().case_stat():
+                    case_stat = ctx.expr().case_stat()
+                    caseTypes = {}
+                    # Somos tres alexis ni al caso
+                    for type in case_stat:
+                        if type in caseTypes:
+                            caseTypes.add(type)
+                        else:
+                            raise caseidenticalbranch("Identical branch")
+
                 if ctx.expr().getChildCount() > 1:
                     for child in ctx.expr().getChildren():
                         if child.getText() == 'self' or child.getText().split(':')[0] == 'self':
