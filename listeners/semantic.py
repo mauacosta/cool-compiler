@@ -3,7 +3,20 @@ from util.exceptions import *
 from antlr.coolListener import coolListener
 from antlr.coolParser import coolParser
 
-operationSymbols = {'+', '-', '*', '/', '%'}
+ariSymbols = {'+', '-', '*', '/', '%'}
+opeSymbols = {'=', '<', '>', '<=', '>=', '!='}
+defaultClasses = {'Object', 'Int', 'String', 'Bool', 'SELF_TYPE', 'Main'}
+
+
+def checkType(x):
+    if x.isdigit():
+        return "Int"
+    elif x == "true" or x == "false":
+        return "Bool"
+    elif x[0] == '"' and x[-1] == '"':
+        return "String"
+    else:
+        return "Object"
 
 
 class semanticListener(coolListener):
@@ -69,6 +82,13 @@ class semanticListener(coolListener):
         else:
             self.classDict[self.actualClass]['expressions'][self.actualFeature] = {
                 "params": {}}
+            if ctx.TYPE():
+                if ctx.TYPE().getText() in self.classDict or ctx.TYPE().getText() in defaultClasses:
+                    self.classDict[self.actualClass]['expressions'][self.actualFeature]['type'] = ctx.TYPE(
+                    ).getText()
+                else:
+                    raise returntypenoexist(
+                        "Class '" + ctx.TYPE().getText() + "' is not defined")
 
         if ctx.params:
             for param in ctx.params:
@@ -76,11 +96,15 @@ class semanticListener(coolListener):
                     raise selfinformalparameter("'Self' is a reserved word")
 
         if ctx._formal:
+
             for formal in ctx._formal.children:
                 if formal.getText() == 'self' or formal.getText() == 'SELF_TYPE':
                     raise selftypeparameterposition(
                         "'Self' is a reserved word"
                     )
+                else:
+                    # Raise error creating two params with the same ID.
+                    pass
         if ctx.expr():
             if ctx.expr().getChildCount() > 0:
                 if ctx.TYPE():
@@ -104,17 +128,45 @@ class semanticListener(coolListener):
                         methodType = self.classDict[self.actualClass]['expressions'][self.actualFeature]['params'][let_params.ID(
                         ).getText()]['TYPE']
                         if let_method not in self.classDict[methodType]['expressions']:
-                            raise(baddispatch("Tas mal chavito"))
+                            raise(baddispatch("Tan mal chavitos :0"))
 
                 if ctx.expr().getChildCount() > 1:
                     for child in ctx.expr().getChildren():
                         if child.getText() == 'self' or child.getText().split(':')[0] == 'self':
                             raise selfassignment(
                                 "'Self assignment' is a reserved word")
-                        if child.getText() in operationSymbols:
+
+                        if child.getText() in opeSymbols or child.getText() in ariSymbols:
                             previousChild = ctx.expr().getChild(
                                 ctx.expr().children.index(child) - 1).getText()
                             nextChild = ctx.expr().getChild(ctx.expr().children.index(child) + 1).getText()
-                            if(not previousChild.isdigit() or not nextChild.isdigit()):
-                                raise badarith(
-                                    "Arithmetic operation between non-numbers")
+                            if child.getText() == '=':
+                                if previousChild in self.classDict[self.actualClass]['expressions'][self.actualFeature]['params']:
+                                    previousType = self.classDict[self.actualClass]['expressions'][
+                                        self.actualFeature]['params'][previousChild]['TYPE']
+                                else:
+                                    previousType = checkType(previousChild)
+                                if nextChild in self.classDict[self.actualClass]['expressions'][self.actualFeature]['params']:
+                                    nextType = self.classDict[self.actualClass]['expressions'][
+                                        self.actualFeature]['params'][nextChild]['TYPE']
+                                else:
+                                    nextType = checkType(nextChild)
+
+                                if previousType != nextType:
+                                    if nextType == 'String':
+                                        raise badequalitytest(
+                                            "Type mismatch in equality test")
+                                    if nextType == 'Bool':
+                                        raise badequalitytest2(
+                                            "Type mismatch in equality test")
+
+                            if child.getText() in ariSymbols:
+                                if(not previousChild.isdigit() or not nextChild.isdigit()):
+                                    raise badarith(
+                                        "Arithmetic operation between non-numbers")
+
+    def enterFormal(self, ctx: coolParser.FormalContext):
+        if ctx.ID().getText() not in self.classDict[self.actualClass]['expressions'][self.actualFeature]['params']:
+            self.classDict[self.actualClass]['expressions'][self.actualFeature]['params'][ctx.ID().getText()] = {
+                "type": ctx.TYPE().getText()
+            }
