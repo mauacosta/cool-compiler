@@ -128,12 +128,11 @@ class semanticListener(coolListener):
                         methodType = self.classDict[self.actualClass]['expressions'][self.actualFeature]['params'][let_params.ID(
                         ).getText()]['TYPE']
                         if let_method not in self.classDict[methodType]['expressions']:
-                            raise(baddispatch("Tan mal chavitos :0"))
+                            raise(baddispatch("Bad dispatch"))
 
                 if ctx.expr().case_stat():
                     case_stat = ctx.expr().case_stat()
                     caseTypes = {}
-                    # Somos tres alexis ni al caso
                     for type in case_stat:
                         if type in caseTypes:
                             caseTypes.add(type)
