@@ -17,6 +17,7 @@ symbolsArr = ['+', '-', '*', '/', '=', '<=', '<']
 class semanticListener(coolListener):
 
     def __init__(self):
+        classDict.clear()
         setBaseKlasses()
         self.main = False
         self.currentKlass = None
@@ -49,9 +50,12 @@ class semanticListener(coolListener):
             raise anattributenamedself("Feature ID not valid (self)")
 
         if ctx.expr():
-            if ctx.expr().getChild(1) in symbolsArr:
-                if not ctx.expr().getChild(0) and ctx.expr().getChild(2):
-                    raise badarith("")
+                    
+            if ctx.expr().getChild(1):
+                # Check for operations with Integers
+                if ctx.expr().getChild(1).getText() in symbolsArr:
+                    if ctx.expr().expr(0).primary().INTEGER() != None or ctx.expr().expr(1).primary().INTEGER() != None:
+                        raise badarith("Trying to do an arithmetic operation with incorrect types")
 
             if ctx.expr().ID():
                 exprName = ctx.expr().ID().getText()
@@ -72,7 +76,7 @@ class semanticListener(coolListener):
                 let_params = ctx.expr().let_decl(0)
                 if let_params.ID().getText() == 'self' or let_params.ID().getText() == 'SELF_TYPE':
                     raise letself("Let incorrect (using self)")
-
+ 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):
             raise nomain()

@@ -5,8 +5,8 @@ program: ( klass ';')*;
 klass: KLASS TYPE ( 'inherits' TYPE)? '{' ( feature ';')* '}';
 
 feature:
-	ID '(' (params += formal (',' params += formal)*)? ')' ':' TYPE '{' expr '}'
-	| ID ':' TYPE ( '<-' expr)?;
+	ID '(' (params += formal (',' params += formal)*)? ')' ':' TYPE '{' expr '}' #method
+	| ID ':' TYPE ( '<-' expr)? #assignment; 
 
 formal: ID ':' TYPE;
 
@@ -27,7 +27,7 @@ expr:
 	| ISVOID expr
 	| expr '*' expr
 	| expr '/' expr
-	| expr '+' expr
+	| expr '+' expr #sum
 	| expr '-' expr
 	| expr '<' expr
 	| expr '<=' expr

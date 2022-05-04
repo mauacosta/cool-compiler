@@ -44,8 +44,8 @@ class Klass():
             self.validHierarchy()
 
         self.lookupKlass()
-        self.attributes = SymbolTableWithScopes()
-        self.methods = SymbolTableWithScopes()
+        self.attributes = SymbolTable()
+        self.methods = SymbolTable()
         _allClasses[name] = self
 
     def validHierarchy(self):
