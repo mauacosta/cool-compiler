@@ -110,6 +110,20 @@ class semanticListener(coolListener):
             raise letself("Let incorrect (using self)")
 
         self.currentKlass.addScopeVariable(let_ID, ctx.TYPE().getText())
+
+    def enterFunction_call(self, ctx: coolParser.Function_callContext):
+        method_name = ctx.ID().getText()
+        caller_exp = ctx.parentCtx.getChild(0).primary()
+        caller_properties = {'id': caller_exp.getText(), 'type':getType(caller_exp, self.currentKlass, self.currentMethod)}
+        
+        try:
+            lookupClass(caller_properties['type'], self.currentKlass, self.currentMethod).callMethod(method_name)
+        except:
+            raise baddispatch(caller_properties['type'] + ' does not have a method ' + method_name)
+        
+
+        
+        print(object)
         
 
     def exitKlass(self, ctx: coolParser.KlassContext):
@@ -117,6 +131,8 @@ class semanticListener(coolListener):
             raise nomain()
         self.currentKlass = None
 
-    def exitLet_decl(self, ctx: coolParser.Let_declContext):
-        self.currentKlass.closeScope()
+    def exitExpr(self, ctx: coolParser.ExprContext):
+        if ctx.let_decl(0):
+            self.currentKlass.closeScope()
+            
     

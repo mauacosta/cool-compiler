@@ -49,6 +49,16 @@ class coolVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by coolParser#function_call.
+    def visitFunction_call(self, ctx:coolParser.Function_callContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by coolParser#while_loop.
+    def visitWhile_loop(self, ctx:coolParser.While_loopContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by coolParser#primary.
     def visitPrimary(self, ctx:coolParser.PrimaryContext):
         return self.visitChildren(ctx)

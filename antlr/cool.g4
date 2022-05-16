@@ -14,15 +14,13 @@ expr:
 	primary
 	| ID '(' ( params += expr ( ',' params += expr)*)? ')'
 	| IF expr THEN expr ELSE expr FI
-	| WHILE expr LOOP expr POOL
-	| expr '.' ID '(' (params += expr ( ',' params += expr)*)? ')'
+	| while_loop
+	| expr '.' function_call
 	| LET let_decl ( ',' let_decl)* IN expr
 	| CASE expr OF (case_stat)+ ESAC
 	| NEW TYPE
 	| '{' ( expr ';')+ '}'
-	| expr ('@' TYPE)? '.' ID '(' (
-		params += expr ( ',' params += expr)*
-	)? ')'
+	| expr ('@' TYPE)? '.' function_call
 	| '˜' expr
 	| ISVOID expr
 	| expr '*' expr
@@ -38,6 +36,10 @@ expr:
 case_stat: ID ':' TYPE '=>' expr ';';
 
 let_decl: ID ':' TYPE ('<-' expr)?;
+
+function_call: ID '(' (params += expr ( ',' params += expr)*)? ')';
+
+while_loop: WHILE expr LOOP expr POOL;
 
 primary: '(' expr ')' | ID | INTEGER | STRING | TRUE | FALSE;
 

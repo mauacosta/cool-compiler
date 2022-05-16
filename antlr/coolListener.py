@@ -80,6 +80,24 @@ class coolListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by coolParser#function_call.
+    def enterFunction_call(self, ctx:coolParser.Function_callContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#function_call.
+    def exitFunction_call(self, ctx:coolParser.Function_callContext):
+        pass
+
+
+    # Enter a parse tree produced by coolParser#while_loop.
+    def enterWhile_loop(self, ctx:coolParser.While_loopContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#while_loop.
+    def exitWhile_loop(self, ctx:coolParser.While_loopContext):
+        pass
+
+
     # Enter a parse tree produced by coolParser#primary.
     def enterPrimary(self, ctx:coolParser.PrimaryContext):
         pass
