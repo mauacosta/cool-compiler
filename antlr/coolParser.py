@@ -368,18 +368,31 @@ class coolParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
+
+
+        def getRuleIndex(self):
+            return coolParser.RULE_feature
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+
+    class MethodContext(FeatureContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a coolParser.FeatureContext
+            super().__init__(parser)
             self._formal = None # FormalContext
             self.params = list() # of FormalContexts
+            self.copyFrom(ctx)
 
         def ID(self):
             return self.getToken(coolParser.ID, 0)
-
         def TYPE(self):
             return self.getToken(coolParser.TYPE, 0)
-
         def expr(self):
             return self.getTypedRuleContext(coolParser.ExprContext,0)
-
 
         def formal(self, i:int=None):
             if i is None:
@@ -388,23 +401,48 @@ class coolParser ( Parser ):
                 return self.getTypedRuleContext(coolParser.FormalContext,i)
 
 
-        def getRuleIndex(self):
-            return coolParser.RULE_feature
-
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFeature" ):
-                listener.enterFeature(self)
+            if hasattr( listener, "enterMethod" ):
+                listener.enterMethod(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFeature" ):
-                listener.exitFeature(self)
+            if hasattr( listener, "exitMethod" ):
+                listener.exitMethod(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitFeature" ):
-                return visitor.visitFeature(self)
+            if hasattr( visitor, "visitMethod" ):
+                return visitor.visitMethod(self)
             else:
                 return visitor.visitChildren(self)
 
+
+    class AssignmentContext(FeatureContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a coolParser.FeatureContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def ID(self):
+            return self.getToken(coolParser.ID, 0)
+        def TYPE(self):
+            return self.getToken(coolParser.TYPE, 0)
+        def expr(self):
+            return self.getTypedRuleContext(coolParser.ExprContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterAssignment" ):
+                listener.enterAssignment(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitAssignment" ):
+                listener.exitAssignment(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAssignment" ):
+                return visitor.visitAssignment(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -418,6 +456,7 @@ class coolParser ( Parser ):
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,6,self._ctx)
             if la_ == 1:
+                localctx = coolParser.MethodContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 41
                 self.match(coolParser.ID)
@@ -460,6 +499,7 @@ class coolParser ( Parser ):
                 pass
 
             elif la_ == 2:
+                localctx = coolParser.AssignmentContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 60
                 self.match(coolParser.ID)

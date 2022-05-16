@@ -14,6 +14,29 @@ class HierarchyException(Exception):
 def lookupClass(name):
     return _allClasses[name]
 
+def getType(exp, actual_klass = None, actual_method = None):
+    if exp.INTEGER() != None:
+        return 'Int'
+    elif exp.STRING() != None:
+        return 'String'
+    elif exp.TRUE() != None or exp.FALSE() != None:
+        return 'Bool'
+    elif exp.ID():
+        if exp.ID().getText() == 'self':
+            return actual_klass
+        if actual_klass == None:
+            return None
+        if exp.ID().getText() in actual_method.params:
+            return actual_method.params[exp.ID().getText()]
+        if exp.ID().getText() in actual_klass.attributes:
+            return actual_klass.attributes[exp.ID().getText()]
+        if actual_klass.scopedTable.dict_list:
+            for scope in actual_klass.scopedTable.dict_list:
+                if exp.ID().getText() in scope:
+                    return scope[exp.ID().getText()]
+        return None
+    return None
+
 
 class Method():
     """
@@ -46,6 +69,7 @@ class Klass():
         self.lookupKlass()
         self.attributes = SymbolTable()
         self.methods = SymbolTable()
+        self.scopedTable = SymbolTableWithScopes(name)
         _allClasses[name] = self
 
     def validHierarchy(self):
@@ -108,6 +132,17 @@ class Klass():
             return True
         else:
             return self.conforms(lookupClass(B.inherits))
+    
+    def openScope(self):
+        self.scopedTable.openScope()
+    
+    def closeScope(self):
+        self.scopedTable.closeScope()
+
+    def addScopeVariable(self, name, type):
+        self.scopedTable.dict_list[self.scopedTable.last][name] = type
+
+    
 
 
 class SymbolTable(MutableMapping):
@@ -148,8 +183,8 @@ class SymbolTableWithScopes(MutableMapping):
     """
 
     def __init__(self, klass):
-        self.dict_list = [{}]
-        self.last = 0
+        self.dict_list = []
+        self.last = -1
         self.klass = klass
 
     def __getitem__(self, key):

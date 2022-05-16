@@ -27,7 +27,7 @@ expr:
 	| ISVOID expr
 	| expr '*' expr
 	| expr '/' expr
-	| expr '+' expr #sum
+	| expr '+' expr
 	| expr '-' expr
 	| expr '<' expr
 	| expr '<=' expr
