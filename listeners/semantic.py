@@ -89,7 +89,9 @@ class semanticListener(coolListener):
         if ctx.getChild(1):
             # Check for operations with Integers
             if ctx.getChild(1).getText() in arithmeticSymbols:
-                if getType(ctx.expr(0).primary()) != 'Int' or getType(ctx.expr(1).primary()) != 'Int':
+                first_item = getType(ctx.expr(0).primary(), self.currentKlass, self.currentMethod)
+                second_item = getType(ctx.expr(1).primary(), self.currentKlass, self.currentMethod)
+                if first_item != 'Int' or second_item != 'Int':
                     raise badarith("Trying to do an arithmetic operation with incorrect types")
             # Check for relation in the same type
             if ctx.getChild(1).getText() in relationalSymbols:
@@ -127,11 +129,6 @@ class semanticListener(coolListener):
             lookupClass(caller_properties['type'], self.currentKlass, self.currentMethod).callMethod(method_name)
         except:
             raise baddispatch(caller_properties['type'] + ' does not have a method ' + method_name)
-        
-
-        
-        print(object)
-        
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):

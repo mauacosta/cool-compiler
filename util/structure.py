@@ -26,12 +26,10 @@ def getType(exp, actual_klass, actual_method):
             return actual_klass
         if exp.ID().getText() in actual_method.params:
             return actual_method.params[exp.ID().getText()]
-        if exp.ID().getText() in actual_klass.attributes:
-            return actual_klass.attributes[exp.ID().getText()]
-        if actual_klass.scopedTable.dict_list:
-            for scope in actual_klass.scopedTable.dict_list:
-                if exp.ID().getText() in scope:
-                    return scope[exp.ID().getText()]
+        try:
+            return actual_klass.lookupAttribute(exp.ID().getText())
+        except KeyError:
+            pass
         return None
     return None
 
@@ -99,6 +97,9 @@ class Klass():
         Buscar un atributo en una clase, si no se encuentra, resolver
         por herencia (hasta Object donde da error si no está el attributo)
         """
+        for scope in self.scopedTable.dict_list:
+            if name in scope:
+                return scope[name]
         if name in self.attributes:
             return self.attributes[name]
         elif self.name == "Object":
