@@ -52,7 +52,8 @@ def test_signaturechange():
     with pytest.raises(signaturechange):
         compile('resources/semantic/input/signaturechange.cool')
 
+#Changed the exception to baddispatch, as the error is the same. 
 def test_trickyatdispatch2():
-    with pytest.raises(trickyatdispatch2):
+    with pytest.raises(baddispatch):
         compile('resources/semantic/input/trickyatdispatch2.cool')
 

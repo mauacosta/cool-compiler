@@ -66,6 +66,13 @@ class semanticListener(coolListener):
         featureID = ctx.ID().getText()
         if featureID == 'self' or featureID == 'SELF_TYPE':
             raise anattributenamedself("Feature ID not valid (self)")
+
+        if ctx.expr():
+            if ctx.expr().primary():
+                primary = ctx.expr().primary()
+                if getType(primary, self.currentKlass, self.currentMethod) == None:
+                    raise attrbadinit( primary.getText() +  ' was not found in this scope')
+
         self.currentKlass.addAttribute(featureID, ctx.TYPE().getText())
 
     def enterExpr(self, ctx: coolParser.ExprContext):

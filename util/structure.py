@@ -14,7 +14,7 @@ class HierarchyException(Exception):
 def lookupClass(name):
     return _allClasses[name]
 
-def getType(exp, actual_klass = None, actual_method = None):
+def getType(exp, actual_klass, actual_method):
     if exp.INTEGER() != None:
         return 'Int'
     elif exp.STRING() != None:
@@ -24,8 +24,6 @@ def getType(exp, actual_klass = None, actual_method = None):
     elif exp.ID():
         if exp.ID().getText() == 'self':
             return actual_klass
-        if actual_klass == None:
-            return None
         if exp.ID().getText() in actual_method.params:
             return actual_method.params[exp.ID().getText()]
         if exp.ID().getText() in actual_klass.attributes:

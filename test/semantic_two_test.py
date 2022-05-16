@@ -16,6 +16,7 @@ def test_badequalitytest():
     with pytest.raises(badequalitytest):
         compile('resources/semantic/input/badequalitytest.cool')
 
+#Changed exception to badequalitytest as is the same one
 def test_badequalitytest2():
     with pytest.raises(badequalitytest):
         compile('resources/semantic/input/badequalitytest2.cool')
