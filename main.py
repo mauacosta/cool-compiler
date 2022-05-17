@@ -11,9 +11,10 @@ def compile(file):
     tree = parser.program()
 
     walker = ParseTreeWalker()
-
-    #walker.walk(semanticListener(), tree)
-    walker.walk(TreePrinter(), tree)
+    #comentar para arbol y descomentar para pruebas
+    walker.walk(semanticListener(), tree)
+    #comentar para pruebas y descomentar para arbol
+    #walker.walk(TreePrinter(), tree)
 
 
 def dummy():

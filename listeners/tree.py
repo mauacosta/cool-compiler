@@ -27,13 +27,27 @@ class TreePrinter(coolListener):
             if type(ctx).__name__[:-7] == "Method":
                 self.currentMethod = ctx.ID().getText()
                 print ("{}{}:{}".format(s, type(ctx).__name__[:-7], ctx.TYPE().getText()))
-
+            if type(ctx).__name__[:-7] == "Formal":
+                print ("{}Param:{}".format(s, ctx.TYPE().getText()))
+            if type(ctx).__name__[:-7] == "Primary":   
+                if(ctx.ID()):
+                    print ("{}Primary:{}".format(s, type(ctx).__name__[:-7],getType(ctx.ID(), self.currentKlass, self.currentMethod)))
+                if(ctx.INTEGER()):
+                    print ("{}Primary:Int".format(s))
+                if(ctx.STRING()):
+                    print ("{}Primary:String".format(s))
+                if(ctx.TRUE() or ctx.FALSE()):
+                    print ("{}Primary:Bool".format(s))
             if(ctx.expr(0).primary()):
                 print ("{}{}:{}".format(s, type(ctx).__name__[:-7], getType(ctx.expr(0).primary(), self.currentKlass, self.currentMethod)))
             else:
                 print ("{}{}:{}".format(s, type(ctx).__name__[:-7], ctx.TYPE().getText()))
         except:
-            print ("{}{}".format(s, type(ctx).__name__[:-7]))
+            if type(ctx).__name__[:-7] == "Method":
+                if( not ctx.ID().getText() == self.currentMethod):
+                    print ("{}{} = {}".format(s, type(ctx).__name__[:-7],ctx.ID().getText()))
+            else:
+                print ("{}{}".format(s, type(ctx).__name__[:-7]))
             
 
 
