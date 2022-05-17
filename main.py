@@ -3,6 +3,7 @@ from antlr.coolLexer import coolLexer
 from antlr.coolParser import coolParser
 
 from listeners.semantic import semanticListener
+from listeners.tree import TreePrinter
 
 
 def compile(file):
@@ -11,7 +12,8 @@ def compile(file):
 
     walker = ParseTreeWalker()
 
-    walker.walk(semanticListener(), tree)
+    #walker.walk(semanticListener(), tree)
+    walker.walk(TreePrinter(), tree)
 
 
 def dummy():
@@ -19,4 +21,4 @@ def dummy():
 
 
 if __name__ == '__main__':
-    compile('resources/semantic/input/nomain.cool')
+    compile('resources/semantic/input/anattributenamedself.cool')
