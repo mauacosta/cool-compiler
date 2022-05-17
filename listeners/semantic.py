@@ -17,6 +17,7 @@ relationalSymbols = ['=', '>', '>=']
 
 
 
+    
 
 class semanticListener(coolListener):
 
@@ -26,6 +27,12 @@ class semanticListener(coolListener):
         self.main = False
         self.currentKlass = None
         self.currentMethod = None
+
+    def getLastPrimary(primary):
+        if primary.expr():
+            if primary.expr().primary():
+                return semanticListener.getLastPrimary(primary.expr().primary())
+        return primary
 
     def enterKlass(self, ctx: coolParser.KlassContext):
         className = ctx.TYPE(0).getText()
@@ -69,7 +76,7 @@ class semanticListener(coolListener):
 
         if ctx.expr():
             if ctx.expr().primary():
-                primary = ctx.expr().primary()
+                primary = semanticListener.getLastPrimary(ctx.expr().primary())
                 if getType(primary, self.currentKlass, self.currentMethod) == None:
                     raise attrbadinit( primary.getText() +  ' was not found in this scope')
 
@@ -82,9 +89,11 @@ class semanticListener(coolListener):
             if exprName == 'self':
                 raise selfassignment('Assignment to self is prohibited')
 
-        if ctx.primary(): 
-            if getType(ctx.primary(), self.currentKlass, self.currentMethod) == None:
-                raise outofscope(ctx.primary().getText() + ' was not found in this scope')
+        if ctx.primary():
+            primary = ctx.primary()
+            if not primary.expr():
+                if getType(ctx.primary(), self.currentKlass, self.currentMethod) == None:
+                    raise outofscope(ctx.primary().getText() + ' was not found in this scope')
 
         if ctx.getChild(1):
             # Check for operations with Integers
@@ -123,6 +132,13 @@ class semanticListener(coolListener):
     def enterFunction_call(self, ctx: coolParser.Function_callContext):
         method_name = ctx.ID().getText()
         caller_exp = ctx.parentCtx.getChild(0).primary()
+        if ctx.parentCtx.getChild(1).getText() == '@':
+            caller_exp = semanticListener.getLastPrimary(caller_exp)
+            other_exp = ctx.parentCtx.TYPE()
+            if(getType(caller_exp, self.currentKlass, self.currentMethod) != other_exp.getText()):
+                raise trickyatdispatch2(caller_exp.getText() + " is not of type " + other_exp.getText())
+
+            
         caller_properties = {'id': caller_exp.getText(), 'type':getType(caller_exp, self.currentKlass, self.currentMethod)}
         
         try:
