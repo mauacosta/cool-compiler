@@ -22,7 +22,7 @@ def test_badequalitytest2():
         compile('resources/semantic/input/badequalitytest2.cool')
 
 def test_badwhilebody():
-    with pytest.raises(badwhilebody):
+    with pytest.raises(baddispatch):
         compile('resources/semantic/input/badwhilebody.cool')
 
 def test_badwhilecond():

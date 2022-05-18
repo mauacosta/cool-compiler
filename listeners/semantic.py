@@ -89,6 +89,16 @@ class semanticListener(coolListener):
             if exprName == 'self':
                 raise selfassignment('Assignment to self is prohibited')
 
+
+        # Check if exist function in the variable
+        # if ctx.function_call():
+        #     try:
+        #         hola = self.currentKlass.lookupMethod(ctx.function_call().ID().getText())
+        #     except KeyError:
+        #         raise badwhilebody('The function does not exists')
+        #     print(hola)
+
+
         if ctx.primary():
             primary = ctx.primary()
             if not primary.expr():
@@ -143,14 +153,12 @@ class semanticListener(coolListener):
             other_exp = ctx.parentCtx.TYPE()
             if(getType(caller_exp, self.currentKlass, self.currentMethod) != other_exp.getText()):
                 raise trickyatdispatch2(caller_exp.getText() + " is not of type " + other_exp.getText())
-
-            
-        caller_properties = {'id': caller_exp.getText(), 'type':getType(caller_exp, self.currentKlass, self.currentMethod)}
         
         try:
-            lookupClass(caller_properties['type'], self.currentKlass, self.currentMethod).callMethod(method_name)
-        except:
-            raise baddispatch(caller_properties['type'] + ' does not have a method ' + method_name)
+            self.currentKlass.lookupMethod(method_name)
+        except KeyError:
+            raise baddispatch('The function does not exists')
+
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):

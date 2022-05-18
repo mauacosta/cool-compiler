@@ -17,7 +17,7 @@ expr:
 	| while_loop
 	| expr '.' function_call
 	| LET let_decl ( ',' let_decl)* IN expr
-	| CASE expr OF (case_stat)+ ESAC
+	| case_func
 	| NEW TYPE
 	| '{' ( expr ';')+ '}'
 	| expr ('@' TYPE)? '.' function_call
@@ -40,6 +40,8 @@ let_decl: ID ':' TYPE ('<-' expr)?;
 function_call: ID '(' (params += expr ( ',' params += expr)*)? ')';
 
 while_loop: WHILE expr LOOP expr POOL;
+
+case_func: CASE expr OF (case_stat)+ ESAC;
 
 primary: '(' expr ')' | ID | INTEGER | STRING | TRUE | FALSE;
 
