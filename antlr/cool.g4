@@ -17,7 +17,7 @@ expr:
 	| while_loop
 	| expr '.' function_call
 	| LET let_decl ( ',' let_decl)* IN expr
-	| CASE expr OF (case_stat)+ ESAC
+	| case
 	| NEW TYPE
 	| '{' ( expr ';')+ '}'
 	| expr ('@' TYPE)? '.' function_call
@@ -32,6 +32,8 @@ expr:
 	| expr '=' expr
 	| 'not' expr
 	| <assoc = right> ID '<-' expr;
+
+case: CASE expr OF (case_stat)+ ESAC;
 
 case_stat: ID ':' TYPE '=>' expr ';';
 

@@ -39,6 +39,11 @@ class coolVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by coolParser#case.
+    def visitCase(self, ctx:coolParser.CaseContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by coolParser#case_stat.
     def visitCase_stat(self, ctx:coolParser.Case_statContext):
         return self.visitChildren(ctx)

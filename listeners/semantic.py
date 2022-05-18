@@ -29,9 +29,11 @@ class semanticListener(coolListener):
         self.currentMethod = None
 
     def getLastPrimary(primary):
+        hola = primary.expr()
         if primary.expr():
             if primary.expr().primary():
                 return semanticListener.getLastPrimary(primary.expr().primary())
+
         return primary
 
     def enterKlass(self, ctx: coolParser.KlassContext):
@@ -135,16 +137,21 @@ class semanticListener(coolListener):
         if ctx.parentCtx.getChild(1).getText() == '@':
             caller_exp = semanticListener.getLastPrimary(caller_exp)
             other_exp = ctx.parentCtx.TYPE()
-            if(getType(caller_exp, self.currentKlass, self.currentMethod) != other_exp.getText()):
+ 
+            if(lookupClass(getType(caller_exp, self.currentKlass, self.currentMethod)).conforms(other_exp.getText())):
                 raise trickyatdispatch2(caller_exp.getText() + " is not of type " + other_exp.getText())
 
             
         caller_properties = {'id': caller_exp.getText(), 'type':getType(caller_exp, self.currentKlass, self.currentMethod)}
         
         try:
+
             lookupClass(caller_properties['type'], self.currentKlass, self.currentMethod).callMethod(method_name)
         except:
             raise baddispatch(caller_properties['type'] + ' does not have a method ' + method_name)
+
+    def enterCase(self, ctx: coolParser.CaseContext):
+        return super().enterCase(ctx)
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):

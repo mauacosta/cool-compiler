@@ -62,6 +62,15 @@ class coolListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by coolParser#case.
+    def enterCase(self, ctx:coolParser.CaseContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#case.
+    def exitCase(self, ctx:coolParser.CaseContext):
+        pass
+
+
     # Enter a parse tree produced by coolParser#case_stat.
     def enterCase_stat(self, ctx:coolParser.Case_statContext):
         pass
