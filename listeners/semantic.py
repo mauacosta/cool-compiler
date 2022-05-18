@@ -117,6 +117,12 @@ class semanticListener(coolListener):
         if ctx.TYPE().getText() == 'SELF_TYPE':
             raise selftypeparameterposition(
                 'SELF_TYPE cannot be used as a parameter type')
+
+    def enterWhile_loop(self, ctx: coolParser.While_loopContext):
+        typeExp0 = getType(semanticListener.getLastPrimary(ctx.expr(0).primary()), self.currentKlass, self.currentMethod)
+        if typeExp0 != 'Bool':
+            raise badwhilecond("While ")
+
         
         
 
