@@ -164,7 +164,7 @@ class semanticListener(coolListener):
 
 
     def enterCase(self, ctx: coolParser.CaseContext):
-        return super().enterCase(ctx)
+        print(hola)
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):
