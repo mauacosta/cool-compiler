@@ -91,6 +91,16 @@ class semanticListener(coolListener):
             if exprName == 'self':
                 raise selfassignment('Assignment to self is prohibited')
 
+
+        # Check if exist function in the variable
+        # if ctx.function_call():
+        #     try:
+        #         hola = self.currentKlass.lookupMethod(ctx.function_call().ID().getText())
+        #     except KeyError:
+        #         raise badwhilebody('The function does not exists')
+        #     print(hola)
+
+
         if ctx.primary():
             primary = ctx.primary()
             if not primary.expr():
@@ -119,6 +129,12 @@ class semanticListener(coolListener):
         if ctx.TYPE().getText() == 'SELF_TYPE':
             raise selftypeparameterposition(
                 'SELF_TYPE cannot be used as a parameter type')
+
+    def enterWhile_loop(self, ctx: coolParser.While_loopContext):
+        typeExp0 = getType(semanticListener.getLastPrimary(ctx.expr(0).primary()), self.currentKlass, self.currentMethod)
+        if typeExp0 != 'Bool':
+            raise badwhilecond("While ")
+
         
         
 
@@ -140,15 +156,12 @@ class semanticListener(coolListener):
  
             if(lookupClass(getType(caller_exp, self.currentKlass, self.currentMethod)).conforms(other_exp.getText())):
                 raise trickyatdispatch2(caller_exp.getText() + " is not of type " + other_exp.getText())
-
-            
-        caller_properties = {'id': caller_exp.getText(), 'type':getType(caller_exp, self.currentKlass, self.currentMethod)}
         
         try:
+            self.currentKlass.lookupMethod(method_name)
+        except KeyError:
+            raise baddispatch('The function does not exists')
 
-            lookupClass(caller_properties['type'], self.currentKlass, self.currentMethod).callMethod(method_name)
-        except:
-            raise baddispatch(caller_properties['type'] + ' does not have a method ' + method_name)
 
     def enterCase(self, ctx: coolParser.CaseContext):
         return super().enterCase(ctx)
