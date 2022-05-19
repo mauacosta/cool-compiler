@@ -164,7 +164,13 @@ class semanticListener(coolListener):
 
 
     def enterCase(self, ctx: coolParser.CaseContext):
-        print(hola)
+        typesCS = {''}
+        for e in ctx.case_stat():
+            if e.TYPE().getText() in typesCS:
+                raise caseidenticalbranch("You have two cases of the same type")
+            else:
+                typesCS.add(e.TYPE().getText())
+        print(typesCS)
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):
