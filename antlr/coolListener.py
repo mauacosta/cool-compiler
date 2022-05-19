@@ -80,6 +80,15 @@ class coolListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by coolParser#if_decl.
+    def enterIf_decl(self, ctx:coolParser.If_declContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#if_decl.
+    def exitIf_decl(self, ctx:coolParser.If_declContext):
+        pass
+
+
     # Enter a parse tree produced by coolParser#let_decl.
     def enterLet_decl(self, ctx:coolParser.Let_declContext):
         pass

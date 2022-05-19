@@ -49,6 +49,11 @@ class coolVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by coolParser#if_decl.
+    def visitIf_decl(self, ctx:coolParser.If_declContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by coolParser#let_decl.
     def visitLet_decl(self, ctx:coolParser.Let_declContext):
         return self.visitChildren(ctx)
