@@ -82,6 +82,13 @@ class semanticListener(coolListener):
                 if getType(primary, self.currentKlass, self.currentMethod) == None:
                     raise attrbadinit( primary.getText() +  ' was not found in this scope')
 
+        try:
+            x = self.currentKlass.lookupAttribute(featureID)
+            if x:
+                raise attroverride("Attribute can not be redefined")
+        except KeyError:
+            pass
+        
         self.currentKlass.addAttribute(featureID, ctx.TYPE().getText())
 
     def enterExpr(self, ctx: coolParser.ExprContext):
@@ -148,6 +155,8 @@ class semanticListener(coolListener):
         self.currentKlass.addScopeVariable(let_ID, ctx.TYPE().getText())
 
     def enterFunction_call(self, ctx: coolParser.Function_callContext):
+        hola = self.currentMethod
+        print(hola)
         method_name = ctx.ID().getText()
         caller_exp = ctx.parentCtx.getChild(0).primary()
         if ctx.parentCtx.getChild(1).getText() == '@':
