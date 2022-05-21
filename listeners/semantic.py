@@ -73,6 +73,15 @@ class semanticListener(coolListener):
             self.currentMethod = Method(methodType, params=this_params)
         else:
             self.currentMethod = Method(methodType)
+        
+        try:
+            methodExist = self.currentKlass.lookupMethod(methodID)
+            if methodExist:
+                raise overridingmethod4("Overriding an existing method")
+            else:
+                pass
+        except KeyError:
+            pass
         self.currentKlass.addMethod(methodID, self.currentMethod)
 
 
