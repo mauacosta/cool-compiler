@@ -77,7 +77,13 @@ class semanticListener(coolListener):
         try:
             methodExist = self.currentKlass.lookupMethod(methodID)
             if methodExist:
-                raise overridingmethod4("Overriding an existing method")
+                if len(methodExist.params) != len(ctx.params):
+                    raise signaturechange("Changing number of parameters")
+                
+                # For every param in params check if it has the same type as in the original declaration.
+                for param in ctx.params:
+                    if methodExist.params[param.ID().getText()] != param.TYPE().getText():
+                        raise overridingmethod4("Overriding an existing method")
             else:
                 pass
         except KeyError:
