@@ -58,9 +58,14 @@ class typeListener(coolListener):
         elif methodType not in classDict:
             raise returntypenoexist("Method" + methodType + "returns an invalid type")
         this_params = []
+        params_names = []
         if ctx.params:
             for param in ctx.params:
-                this_params.append([param.ID().getText(), param.TYPE().getText()])
+                if param.ID().getText() not in params_names:
+                    this_params.append([param.ID().getText(), param.TYPE().getText()])
+                    params_names.append(param.ID().getText())
+                else:
+                    raise dupformals("all formal parameters should have a unique name")
             self.currentMethod = Method(methodType, params=this_params)
         else:
             self.currentMethod = Method(methodType)
