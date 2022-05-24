@@ -11,7 +11,7 @@ def compile(file):
     tree = parser.program()
 
     walker = ParseTreeWalker()
-    #walker.walk(typeListener(), tree)
+    walker.walk(typeListener(), tree)
     walker.walk(semanticListener(), tree)
 
 

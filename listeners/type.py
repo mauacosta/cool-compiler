@@ -12,10 +12,6 @@ prohibitedClassnames = {'Int': badredefineint,
 prohibitedInheritance = {'Bool': inheritsbool,
                          'String': inheritsstring, 'SELF_TYPE': inheritsselftype}
 
-arithmeticSymbols = ['+', '-', '*', '/']
-relationalSymbols = ['=', '>', '>=']
-
-
 
     
 
@@ -80,8 +76,5 @@ class typeListener(coolListener):
             raise nomain()
         self.currentKlass = None
 
-    def exitExpr(self, ctx: coolParser.ExprContext):
-        if ctx.let_decl(0):
-            self.currentKlass.closeScope()
             
     

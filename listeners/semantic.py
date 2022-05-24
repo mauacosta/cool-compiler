@@ -6,12 +6,6 @@ from util.structure import *
 from util.structure import _allClasses as classDict
 
 
-prohibitedClassnames = {'Int': badredefineint,
-                        'Object': redefinedobject, 'SELF_TYPE': selftyperedeclared}
-
-prohibitedInheritance = {'Bool': inheritsbool,
-                         'String': inheritsstring, 'SELF_TYPE': inheritsselftype}
-
 arithmeticSymbols = ['+', '-', '*', '/']
 relationalSymbols = ['=', '>', '>=']
 
@@ -22,9 +16,6 @@ relationalSymbols = ['=', '>', '>=']
 class semanticListener(coolListener):
 
     def __init__(self):
-        classDict.clear()
-        setBaseKlasses()
-        self.main = False
         self.currentKlass = None
         self.currentMethod = None
         self.currentMethodName = None
@@ -39,29 +30,12 @@ class semanticListener(coolListener):
 
     def enterKlass(self, ctx: coolParser.KlassContext):
         className = ctx.TYPE(0).getText()
-        if className in prohibitedClassnames:
-            raise prohibitedClassnames[className]()
-        if ctx.TYPE(1):
-            classInherits = ctx.TYPE(1).getText()
-            if classInherits in prohibitedInheritance:
-                raise prohibitedInheritance[classInherits]()
-            self.currentKlass = Klass(
-                className, inherits=ctx.TYPE(1).getText())
-        else:
-            self.currentKlass = Klass(className)
-        if className == 'Main':
-            self.main = True
+        self.currentKlass = classDict[className]
+
       
     def enterMethod(self, ctx: coolParser.MethodContext):
         methodID = ctx.ID().getText()
         methodType = ctx.TYPE().getText()
-        if methodID == 'self' or methodID == 'SELF_TYPE':
-            raise anattributenamedself("Method ID not valid (self)")
-        if methodType == 'SELF_TYPE':
-            if ctx.expr().children[0].getText() != 'self':
-                raise selftypebadreturn("Invalid Self Type return")
-        elif methodType not in classDict:
-            raise returntypenoexist("Method" + methodType + "returns an invalid type")
         this_params = []
         if ctx.params:
             for param in ctx.params:
@@ -70,7 +44,6 @@ class semanticListener(coolListener):
         else:
             self.currentMethod = Method(methodType)
         self.currentMethodName = methodID
-        self.currentKlass.addMethod(methodID, self.currentMethod)
 
 
     def enterAssignment(self, ctx: coolParser.AssignmentContext):
@@ -178,8 +151,6 @@ class semanticListener(coolListener):
         print(typesCS)
 
     def exitKlass(self, ctx: coolParser.KlassContext):
-        if (not self.main):
-            raise nomain()
         self.currentKlass = None
 
     def exitExpr(self, ctx: coolParser.ExprContext):
