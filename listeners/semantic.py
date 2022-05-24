@@ -27,6 +27,7 @@ class semanticListener(coolListener):
         self.main = False
         self.currentKlass = None
         self.currentMethod = None
+        self.currentMethodName = None
 
     def getLastPrimary(primary):
         hola = primary.expr()
@@ -68,6 +69,7 @@ class semanticListener(coolListener):
             self.currentMethod = Method(methodType, params=this_params)
         else:
             self.currentMethod = Method(methodType)
+        self.currentMethodName = methodID
         self.currentKlass.addMethod(methodID, self.currentMethod)
 
 
@@ -93,12 +95,13 @@ class semanticListener(coolListener):
 
 
         # Check if exist function in the variable
-        # if ctx.function_call():
-        #     try:
-        #         hola = self.currentKlass.lookupMethod(ctx.function_call().ID().getText())
-        #     except KeyError:
-        #         raise badwhilebody('The function does not exists')
-        #     print(hola)
+        if ctx.function_call():
+            #try:
+                #hola = self.currentKlass.lookupMethod(ctx.function_call().ID().getText())
+            #except KeyError:
+                #raise badwhilebody('The function does not exists')
+            if self.currentMethodName == ctx.function_call().ID().getText():
+                raise badmethodcallsitself("a method can´t call iteself")
 
 
         if ctx.primary():
@@ -150,10 +153,12 @@ class semanticListener(coolListener):
     def enterFunction_call(self, ctx: coolParser.Function_callContext):
         method_name = ctx.ID().getText()
         caller_exp = ctx.parentCtx.getChild(0).primary()
+        if method_name == self.currentMethod:
+            raise badmethodcallsitself("A method can not call itself")
         if ctx.parentCtx.getChild(1).getText() == '@':
             caller_exp = semanticListener.getLastPrimary(caller_exp)
             other_exp = ctx.parentCtx.TYPE()
- 
+
             if(lookupClass(getType(caller_exp, self.currentKlass, self.currentMethod)).conforms(other_exp.getText())):
                 raise trickyatdispatch2(caller_exp.getText() + " is not of type " + other_exp.getText())
         
