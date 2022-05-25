@@ -24,14 +24,6 @@ class typeListener(coolListener):
         self.currentKlass = None
         self.currentMethod = None
 
-    def getLastPrimary(primary):
-        hola = primary.expr()
-        if primary.expr():
-            if primary.expr().primary():
-                return typeListener.getLastPrimary(primary.expr().primary())
-
-        return primary
-
     def enterKlass(self, ctx: coolParser.KlassContext):
         className = ctx.TYPE(0).getText()
         if className in prohibitedClassnames:
@@ -58,14 +50,7 @@ class typeListener(coolListener):
         elif methodType not in classDict:
             raise returntypenoexist("Method" + methodType + "returns an invalid type")
         this_params = []
-        params_names = []
         if ctx.params:
-            for param in ctx.params:
-                if param.ID().getText() not in params_names:
-                    this_params.append([param.ID().getText(), param.TYPE().getText()])
-                    params_names.append(param.ID().getText())
-                else:
-                    raise dupformals("all formal parameters should have a unique name")
             self.currentMethod = Method(methodType, params=this_params)
         else:
             self.currentMethod = Method(methodType)
@@ -83,11 +68,6 @@ class typeListener(coolListener):
         except KeyError:
             pass
         self.currentKlass.addMethod(methodID, self.currentMethod)
-
-                
-
-
-
 
     def exitKlass(self, ctx: coolParser.KlassContext):
         if (not self.main):
