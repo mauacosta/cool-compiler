@@ -39,6 +39,11 @@ class semanticListener(coolListener):
         this_params = []
         if ctx.params:
             for param in ctx.params:
+                for id in this_params:
+                    hola = id[0]
+                    if param.ID().getText() == id[0]:
+                        hola = "duplicated"
+                        raise dupformals("Duplicated formal")
                 this_params.append([param.ID().getText(), param.TYPE().getText()])
             self.currentMethod = Method(methodType, params=this_params)
         else:
@@ -57,6 +62,13 @@ class semanticListener(coolListener):
                 if getType(primary, self.currentKlass, self.currentMethod) == None:
                     raise attrbadinit( primary.getText() +  ' was not found in this scope')
 
+        try:
+            x = self.currentKlass.lookupAttribute(featureID)
+            if x:
+                raise attroverride("Attribute can not be redefined")
+        except KeyError:
+            pass
+        
         self.currentKlass.addAttribute(featureID, ctx.TYPE().getText())
 
     def enterExpr(self, ctx: coolParser.ExprContext):
@@ -124,6 +136,8 @@ class semanticListener(coolListener):
         self.currentKlass.addScopeVariable(let_ID, ctx.TYPE().getText())
 
     def enterFunction_call(self, ctx: coolParser.Function_callContext):
+        hola = self.currentMethod
+        print(hola)
         method_name = ctx.ID().getText()
         caller_exp = ctx.parentCtx.getChild(0).primary()
         if method_name == self.currentMethod:
@@ -156,5 +170,5 @@ class semanticListener(coolListener):
     def exitExpr(self, ctx: coolParser.ExprContext):
         if ctx.let_decl(0):
             self.currentKlass.closeScope()
-            
-    
+
+
