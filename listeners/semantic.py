@@ -39,16 +39,16 @@ class semanticListener(coolListener):
         this_params = []
         if ctx.params:
             for param in ctx.params:
-                for id in this_params:
-                    hola = id[0]
-                    if param.ID().getText() == id[0]:
-                        hola = "duplicated"
-                        raise dupformals("Duplicated formal")
                 this_params.append([param.ID().getText(), param.TYPE().getText()])
             self.currentMethod = Method(methodType, params=this_params)
         else:
             self.currentMethod = Method(methodType)
         self.currentMethodName = methodID
+
+        
+        if ctx.expr():
+            hola = ctx.expr().getText()
+            print(hola)
 
 
     def enterAssignment(self, ctx: coolParser.AssignmentContext):

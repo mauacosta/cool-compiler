@@ -51,6 +51,13 @@ class typeListener(coolListener):
             raise returntypenoexist("Method" + methodType + "returns an invalid type")
         this_params = []
         if ctx.params:
+            for param in ctx.params:
+                for id in this_params:
+                    hola = id[0]
+                    if param.ID().getText() == id[0]:
+                        hola = "duplicated"
+                        raise dupformals("Duplicated formal")
+                this_params.append([param.ID().getText(), param.TYPE().getText()])
             self.currentMethod = Method(methodType, params=this_params)
         else:
             self.currentMethod = Method(methodType)
@@ -58,7 +65,10 @@ class typeListener(coolListener):
             methodExist = self.currentKlass.lookupMethod(methodID)
             if methodExist:
                 if len(methodExist.params) != len(ctx.params):
+                    hola = len(methodExist.params)
+                    hola2 = len(ctx.params)
                     raise signaturechange("Changing number of parameters")
+                
                 # For every param in params check if it has the same type as in the original declaration.
                 for param in ctx.params:
                     if methodExist.params[param.ID().getText()] != param.TYPE().getText():
