@@ -79,6 +79,27 @@ class semanticListener(coolListener):
         if ctx.function_call():
             if self.currentMethodName == ctx.function_call().ID().getText():
                 raise badmethodcallsitself("a method can´t call iteself")
+            try:
+                attributeCaller = ctx.expr(0).getText()
+                attributeType = self.currentKlass.lookupAttribute(attributeCaller)            
+            except KeyError:
+                pass
+            
+            try:
+                klass = lookupClass(attributeType)
+                klass.lookupMethod(ctx.function_call().ID().getText())
+            except KeyError:
+                raise baddispatch(attributeCaller + ' does not have a method ' + ctx.function_call().ID().getText())
+
+            try:
+                klassName = self.currentMethod.params[attributeCaller]
+                klass = lookupClass(klassName)
+                klass.lookupMethod(ctx.function_call().ID().getText())
+            except KeyError:
+                raise badwhilebody("The method " + ctx.function_call().ID().getText() + " does not exist in the class " + attributeType)
+            
+            
+
 
 
         if ctx.primary():
@@ -124,11 +145,21 @@ class semanticListener(coolListener):
         
 
     def enterLet_decl(self, ctx: coolParser.Let_declContext):
+        # Si me parece, pero no entiendo como vamos a tomar el tipo de la derecha
+        # Cree en el G4 algo que se llama assign_new_type si quieres checalo, ahí esta el id <- new_type 
+        # el problema de eso es que mataba a outofscope y assignnoconform porque me aparece un error de que pues su expr no tiene assignment_new_type
         self.currentKlass.openScope()
         let_ID = ctx.ID().getText()
 
         if let_ID == 'self' or let_ID == 'SELF_TYPE':
             raise letself("Let incorrect (using self)")
+
+        if ctx.expr():
+            if ctx.expr().NEW():
+                letType = ctx.TYPE().getText() # B
+                newType = ctx.expr().TYPE().getText() # A
+                if not lookupClass(letType).conforms(lookupClass(newType)):
+                    raise letbadinit(letType + ' is not conform to ' + newType)
 
         self.currentKlass.addScopeVariable(let_ID, ctx.TYPE().getText())
 
@@ -144,11 +175,9 @@ class semanticListener(coolListener):
             if(lookupClass(getType(caller_exp, self.currentKlass, self.currentMethod)).conforms(other_exp.getText())):
                 raise trickyatdispatch2(caller_exp.getText() + " is not of type " + other_exp.getText())
         
-        try:
-            self.currentKlass.lookupMethod(method_name)
-        except KeyError:
-            raise baddispatch('The function does not exists')
-
+        
+    
+    
 
     def enterCase(self, ctx: coolParser.CaseContext):
         typesCS = {''}
