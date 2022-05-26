@@ -62,6 +62,15 @@ class coolListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by coolParser#assignment_new_type.
+    def enterAssignment_new_type(self, ctx:coolParser.Assignment_new_typeContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#assignment_new_type.
+    def exitAssignment_new_type(self, ctx:coolParser.Assignment_new_typeContext):
+        pass
+
+
     # Enter a parse tree produced by coolParser#case.
     def enterCase(self, ctx:coolParser.CaseContext):
         pass

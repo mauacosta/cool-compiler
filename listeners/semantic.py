@@ -21,7 +21,6 @@ class semanticListener(coolListener):
         self.currentMethodName = None
 
     def getLastPrimary(primary):
-        hola = primary.expr()
         if primary.expr():
             if primary.expr().primary():
                 return semanticListener.getLastPrimary(primary.expr().primary())
@@ -46,9 +45,6 @@ class semanticListener(coolListener):
         self.currentMethodName = methodID
 
         
-        if ctx.expr():
-            hola = ctx.expr().getText()
-            print(hola)
 
 
     def enterAssignment(self, ctx: coolParser.AssignmentContext):
@@ -81,10 +77,6 @@ class semanticListener(coolListener):
 
         # Check if exist function in the variable
         if ctx.function_call():
-            #try:
-                #hola = self.currentKlass.lookupMethod(ctx.function_call().ID().getText())
-            #except KeyError:
-                #raise badwhilebody('The function does not exists')
             if self.currentMethodName == ctx.function_call().ID().getText():
                 raise badmethodcallsitself("a method can´t call iteself")
 
@@ -123,6 +115,11 @@ class semanticListener(coolListener):
         if typeExp0 != 'Bool':
             raise badwhilecond("While ")
 
+    def enterAssignment_new_type(self, ctx: coolParser.Assignment_new_typeContext):
+        attributeType = self.currentKlass.lookupAttribute(ctx.ID().getText())
+        newType = ctx.TYPE().getText()
+        if attributeType != newType:
+            raise assignnoconform()
         
         
 
@@ -136,8 +133,6 @@ class semanticListener(coolListener):
         self.currentKlass.addScopeVariable(let_ID, ctx.TYPE().getText())
 
     def enterFunction_call(self, ctx: coolParser.Function_callContext):
-        hola = self.currentMethod
-        print(hola)
         method_name = ctx.ID().getText()
         caller_exp = ctx.parentCtx.getChild(0).primary()
         if method_name == self.currentMethod:
