@@ -132,15 +132,6 @@ class semanticListener(coolListener):
             
             # if ctx.expr(0).TYPE():
             hola = ctx.expr(0).getText()
-            
-            try:
-                klassName = self.currentMethod.params[attributeCaller]
-                klass = lookupClass(klassName)
-                klass.lookupMethod(ctx.function_call().ID().getText())
-            except KeyError:
-                raise badwhilebody("The method " + ctx.function_call().ID().getText() + " does not exist in the class ")
-            except:
-                pass
 
             try:
                 if attributeCaller == 'self':
@@ -150,6 +141,21 @@ class semanticListener(coolListener):
                     raise badstaticdispatch(callerType + ' is not conform to ' + attributeCaller)
             except badstaticdispatch:
                 raise badstaticdispatch(callerType + ' is not conform to ' + attributeCaller)
+            except:
+                pass
+            
+
+            try:
+                hola = attributeCaller
+                klassName = self.currentMethod.params[attributeCaller]
+                klass = lookupClass(klassName)
+                klass.lookupMethod(ctx.function_call().ID().getText())
+            except KeyError:
+                raise badwhilebody("The method " + ctx.function_call().ID().getText() + " does not exist in the class ")
+            except:
+                pass
+
+            
 
 
            
