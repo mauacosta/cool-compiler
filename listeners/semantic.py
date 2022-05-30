@@ -51,6 +51,17 @@ class semanticListener(coolListener):
             ifFalseType = self.currentKlass.lookupAttribute(ifFalse)
             if not lookupClass(methodType).conforms(lookupClass(ifTrueType)) and not lookupClass(methodType).conforms(lookupClass(ifFalseType)):
                 raise lubtest(methodType + ' is not conform to ' + ifTrueType + ' or ' + ifFalseType)
+        
+        try:
+            if ctx.expr().expr(0).primary():
+                leftType = ctx.expr().expr(0).primary().expr().TYPE().getText()
+                rightType = ctx.expr().TYPE().getText()
+                if not lookupClass(leftType).conforms(lookupClass(rightType)):
+                    raise trickyatdispatch2(leftType + ' is not conform to ' + rightType)
+        except trickyatdispatch2:
+            raise trickyatdispatch2(leftType + ' is not conform to ' + rightType)
+        except:
+            pass
 
         
 
