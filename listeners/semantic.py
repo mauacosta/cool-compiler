@@ -114,13 +114,14 @@ class semanticListener(coolListener):
                 pass
 
             if self.currentMethodName == ctx.function_call().ID().getText():
-                raise badmethodcallsitself("a method can´t call iteself")
+                raise badmethodcallsitself("a method can´t call iteself")            
             try:
-                attributeCaller = ctx.expr(0).getText()
+                attributeCaller = ctx.expr(0).getText() 
                 attributeType = self.currentKlass.lookupAttribute(attributeCaller)            
             except KeyError:
                 pass
             
+
             try:
                 klass = lookupClass(attributeType)
                 klass.lookupMethod(ctx.function_call().ID().getText())
@@ -137,9 +138,21 @@ class semanticListener(coolListener):
                 klass = lookupClass(klassName)
                 klass.lookupMethod(ctx.function_call().ID().getText())
             except KeyError:
-                raise badwhilebody("The method " + ctx.function_call().ID().getText() + " does not exist in the class " + attributeType)
+                raise badwhilebody("The method " + ctx.function_call().ID().getText() + " does not exist in the class ")
             except:
                 pass
+
+            try:
+                if attributeCaller == 'self':
+                    attributeCaller = self.currentKlass.name #B
+                callerType = ctx.TYPE().getText() #C
+                if not lookupClass(callerType).conforms(lookupClass(attributeCaller)):
+                    raise badstaticdispatch(callerType + ' is not conform to ' + attributeCaller)
+            except badstaticdispatch:
+                raise badstaticdispatch(callerType + ' is not conform to ' + attributeCaller)
+
+
+           
             
         if ctx.primary():
             primary = ctx.primary()
@@ -213,9 +226,6 @@ class semanticListener(coolListener):
             caller_exp = semanticListener.getLastPrimary(caller_exp)
             other_exp = ctx.parentCtx.TYPE()
 
-            if(lookupClass(getType(caller_exp, self.currentKlass, self.currentMethod)).conforms(other_exp.getText())):
-                raise trickyatdispatch2(caller_exp.getText() + " is not of type " + other_exp.getText())
-        
         
     
     
