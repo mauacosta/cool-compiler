@@ -4,6 +4,7 @@ from antlr.coolParser import coolParser
 
 from listeners.semantic import semanticListener
 from listeners.tree import TreePrinter
+from listeners.type import typeListener
 
 
 def compile(file):
@@ -11,10 +12,13 @@ def compile(file):
     tree = parser.program()
 
     walker = ParseTreeWalker()
+    walker.walk(TreePrinter(), tree)
     #comentar para arbol y descomentar para pruebas
-    walker.walk(semanticListener(), tree)
+    #walker.walk(typeListener(), tree)
+    #walker.walk(semanticListener(), tree)
     #comentar para pruebas y descomentar para arbol
-    #walker.walk(TreePrinter(), tree)
+    
+
 
 
 def dummy():
@@ -22,4 +26,4 @@ def dummy():
 
 
 if __name__ == '__main__':
-    compile('resources/semantic/input/anattributenamedself.cool')
+    compile('resources/semantic/input/simplecase.cool')

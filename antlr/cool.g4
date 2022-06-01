@@ -12,12 +12,12 @@ formal: ID ':' TYPE;
 
 expr:
 	primary
-	| ID '(' ( params += expr ( ',' params += expr)*)? ')'
-	| IF expr THEN expr ELSE expr FI
+	| function_call
+	| if_decl
 	| while_loop
 	| expr '.' function_call
 	| LET let_decl ( ',' let_decl)* IN expr
-	| CASE expr OF (case_stat)+ ESAC
+	| case
 	| NEW TYPE
 	| '{' ( expr ';')+ '}'
 	| expr ('@' TYPE)? '.' function_call
@@ -30,10 +30,18 @@ expr:
 	| expr '<' expr
 	| expr '<=' expr
 	| expr '=' expr
+	| assignment_new_type
 	| 'not' expr
 	| <assoc = right> ID '<-' expr;
 
+
+assignment_new_type: ID '<-' NEW TYPE;
+
+case: CASE expr OF (case_stat)+ ESAC;
+
 case_stat: ID ':' TYPE '=>' expr ';';
+
+if_decl: IF expr THEN expr ELSE expr FI;
 
 let_decl: ID ':' TYPE ('<-' expr)?;
 
@@ -95,7 +103,6 @@ ID: [a-z][_a-zA-Z0-9]*;
 INTEGER: [0-9]+;
 STRING: '"' .*? '"';
 
-COMMENT: '(*' .*? '*)' -> skip;
+COMMENT: '(' .? '*)' -> skip;
 LINE_COMENT: '--' ~[\r\n]* -> skip;
 WS: [ \r\t\u000C\n]+ -> skip;
-

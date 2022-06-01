@@ -21,24 +21,37 @@ class TreePrinter(coolListener):
             # def __str__(self):
             #     return "foo"
             # si no encuentra el atributo simplement va a escribir el nombre del nodo
+            #print ("{}{}:{}".format(s, type(ctx).__name__[:-7], poner el tipo en su estructura))
+
+
+
             if type(ctx).__name__[:-7] == "Klass":
+                ##Class NombreClase: Tipo 
                 self.currentKlass = ctx.TYPE(0).getText()
-                print ("{}{}: inherits {}".format(s, type(ctx).__name__[:-7], ctx.TYPE(1).getText()))
-            if type(ctx).__name__[:-7] == "Method":
+                
+                if(ctx.TYPE(1)):
+                    print ("{}{} {}: inherits {}".format(s, type(ctx).__name__[:-7],  self.currentKlass, ctx.TYPE(1).getText()))
+                else:
+                    print("{}{} {}".format(s, type(ctx).__name__[:-7],  self.currentKlass))
+            elif type(ctx).__name__[:-7] == "Method":
                 self.currentMethod = ctx.ID().getText()
-                print ("{}{}:{}".format(s, type(ctx).__name__[:-7], ctx.TYPE().getText()))
-            if type(ctx).__name__[:-7] == "Formal":
+                print ("{}{} {}:{}".format(s, type(ctx).__name__[:-7],self.currentMethod, ctx.TYPE().getText()))
+            elif type(ctx).__name__[:-7] == "Assignment" or type(ctx).__name__[:-7] == "Assignment_new_type" or type(ctx).__name__[:-7] == "Let_decl" or type(ctx).__name__[:-7] == "Case_stat":
+                print ("{}{} {}: {}".format(s, type(ctx).__name__[:-7], ctx.ID().getText(), ctx.TYPE().getText()))
+            elif type(ctx).__name__[:-7] == "Formal":
                 print ("{}Param:{}".format(s, ctx.TYPE().getText()))
-            if type(ctx).__name__[:-7] == "Primary":   
+            elif type(ctx).__name__[:-7] == "Function_call":
+                print ("{} Call {}".format(s, ctx.ID().getText()))
+            elif type(ctx).__name__[:-7] == "Primary":   
                 if(ctx.ID()):
-                    print ("{}Primary:{}".format(s, type(ctx).__name__[:-7],getType(ctx.ID(), self.currentKlass, self.currentMethod)))
-                if(ctx.INTEGER()):
+                    print ("{}Primary:{}".format(s, type(ctx).__name__[:-7], getType(ctx.ID(), self.currentKlass, self.currentMethod)))
+                elif(ctx.INTEGER()):
                     print ("{}Primary:Int".format(s))
-                if(ctx.STRING()):
+                elif(ctx.STRING()):
                     print ("{}Primary:String".format(s))
-                if(ctx.TRUE() or ctx.FALSE()):
+                elif(ctx.TRUE() or ctx.FALSE()):
                     print ("{}Primary:Bool".format(s))
-            if(ctx.expr(0).primary()):
+            elif(ctx.expr(0).primary()):
                 print ("{}{}:{}".format(s, type(ctx).__name__[:-7], getType(ctx.expr(0).primary(), self.currentKlass, self.currentMethod)))
             else:
                 print ("{}{}:{}".format(s, type(ctx).__name__[:-7], ctx.TYPE().getText()))
@@ -47,6 +60,7 @@ class TreePrinter(coolListener):
                 if( not ctx.ID().getText() == self.currentMethod):
                     print ("{}{} = {}".format(s, type(ctx).__name__[:-7],ctx.ID().getText()))
             else:
+                #print(type(ctx).__name__[:-7])
                 print ("{}{}".format(s, type(ctx).__name__[:-7]))
             
 

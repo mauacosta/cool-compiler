@@ -1,4 +1,4 @@
-# Generated from /Users/mau/Documents/code/cool-compiler/antlr/cool.g4 by ANTLR 4.9.2
+# Generated from c:\Users\gina1\Documents\Tec\Compiladores\cool-compiler\antlr\cool.g4 by ANTLR 4.9.3
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .coolParser import coolParser
@@ -62,12 +62,39 @@ class coolListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by coolParser#assignment_new_type.
+    def enterAssignment_new_type(self, ctx:coolParser.Assignment_new_typeContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#assignment_new_type.
+    def exitAssignment_new_type(self, ctx:coolParser.Assignment_new_typeContext):
+        pass
+
+
+    # Enter a parse tree produced by coolParser#case.
+    def enterCase(self, ctx:coolParser.CaseContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#case.
+    def exitCase(self, ctx:coolParser.CaseContext):
+        pass
+
+
     # Enter a parse tree produced by coolParser#case_stat.
     def enterCase_stat(self, ctx:coolParser.Case_statContext):
         pass
 
     # Exit a parse tree produced by coolParser#case_stat.
     def exitCase_stat(self, ctx:coolParser.Case_statContext):
+        pass
+
+
+    # Enter a parse tree produced by coolParser#if_decl.
+    def enterIf_decl(self, ctx:coolParser.If_declContext):
+        pass
+
+    # Exit a parse tree produced by coolParser#if_decl.
+    def exitIf_decl(self, ctx:coolParser.If_declContext):
         pass
 
 
