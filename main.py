@@ -26,4 +26,4 @@ def dummy():
 
 
 if __name__ == '__main__':
-    compile('resources/semantic/input/simplecase.cool')
+    compile('resources/semantic/input/cells.cool')

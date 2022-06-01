@@ -41,20 +41,25 @@ class TreePrinter(coolListener):
             elif type(ctx).__name__[:-7] == "Formal":
                 print ("{}Param:{}".format(s, ctx.TYPE().getText()))
             elif type(ctx).__name__[:-7] == "Function_call":
-                print ("{} Call {}".format(s, ctx.ID().getText()))
-            elif type(ctx).__name__[:-7] == "Primary":   
+                print ("{} Call method {}".format(s, ctx.ID().getText()))
+            elif type(ctx).__name__[:-7] == "Primary":
                 if(ctx.ID()):
-                    print ("{}Primary:{}".format(s, type(ctx).__name__[:-7], getType(ctx.ID(), self.currentKlass, self.currentMethod)))
+                    print("{}Primary:{} ".format(s, ctx.getText()))
                 elif(ctx.INTEGER()):
-                    print ("{}Primary:Int".format(s))
+                    print("{}Primary:Int value {}".format(s, ctx.getText()))
                 elif(ctx.STRING()):
-                    print ("{}Primary:String".format(s))
-                elif(ctx.TRUE() or ctx.FALSE()):
-                    print ("{}Primary:Bool".format(s))
+                    print("{}Primary:String value {}".format(s, ctx.getText()))
+                elif(ctx.TRUE() ):
+                    print("{}Primary:Bool value True".format(s))
+                elif(ctx.FALSE()):
+                    print("{}Primary:Bool value False".format(s))
+            elif type(ctx).__name__[:-7] == "While_loop" or type(ctx).__name__[:-7] == "If_decl":
+                print("{} enters {}".format(s,type(ctx).__name__[:-7]))
             elif(ctx.expr(0).primary()):
                 print ("{}{}:{}".format(s, type(ctx).__name__[:-7], getType(ctx.expr(0).primary(), self.currentKlass, self.currentMethod)))
             else:
                 print ("{}{}:{}".format(s, type(ctx).__name__[:-7], ctx.TYPE().getText()))
+
         except:
             if type(ctx).__name__[:-7] == "Method":
                 if( not ctx.ID().getText() == self.currentMethod):
@@ -62,6 +67,7 @@ class TreePrinter(coolListener):
             else:
                 #print(type(ctx).__name__[:-7])
                 print ("{}{}".format(s, type(ctx).__name__[:-7]))
+
             
 
 
