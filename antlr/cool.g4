@@ -30,9 +30,12 @@ expr:
 	| expr '<' expr
 	| expr '<=' expr
 	| expr '=' expr
+	| assignment_new_type
 	| 'not' expr
 	| <assoc = right> ID '<-' expr;
 
+
+assignment_new_type: ID '<-' NEW TYPE;
 
 case: CASE expr OF (case_stat)+ ESAC;
 

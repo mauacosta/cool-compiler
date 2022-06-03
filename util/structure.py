@@ -1,3 +1,4 @@
+from tokenize import Number, String
 from util.exceptions import *
 from _collections_abc import MutableMapping
 from collections import OrderedDict
@@ -13,6 +14,18 @@ class HierarchyException(Exception):
 
 def lookupClass(name):
     return _allClasses[name]
+
+def getParamType(param, current_klass, current_method):
+    if param == 'self':
+        return current_klass.name
+    elif param.isnumeric():
+        return 'Number'
+    elif param.isalpha():
+        return 'String'
+    elif param == 'true' or param == 'false':
+        return 'Bool'
+    else:
+        return None
 
 def getType(exp, actual_klass, actual_method):
     if exp.INTEGER() != None:

@@ -1,4 +1,4 @@
-# Generated from c:\Users\bryan\Documents\Semestre Feb-Jun 2022\Compiladores\Proyecto Final\cool-compiler\antlr\cool.g4 by ANTLR 4.9.3
+# Generated from c:\Users\gina1\Documents\Tec\Compiladores\cool-compiler\antlr\cool.g4 by ANTLR 4.9.3
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .coolParser import coolParser
@@ -36,6 +36,11 @@ class coolVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by coolParser#expr.
     def visitExpr(self, ctx:coolParser.ExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by coolParser#assignment_new_type.
+    def visitAssignment_new_type(self, ctx:coolParser.Assignment_new_typeContext):
         return self.visitChildren(ctx)
 
 
