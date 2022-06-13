@@ -5,17 +5,22 @@ from antlr.coolParser import coolParser
 from listeners.semantic import semanticListener
 from listeners.tree import TreePrinter
 from listeners.type import typeListener
-
+from listeners.saveData import saveDataListener
+from listeners.codegen import codeGenerator
 
 def compile(file):
     parser = coolParser(CommonTokenStream(coolLexer(FileStream(file))))
     tree = parser.program()
 
     walker = ParseTreeWalker()
-    walker.walk(TreePrinter(), tree)
+    #walker.walk(TreePrinter(), tree)
     #comentar para arbol y descomentar para pruebas
-    #walker.walk(typeListener(), tree)
-    #walker.walk(semanticListener(), tree)
+    walker.walk(typeListener(), tree)
+    walker.walk(semanticListener(), tree)
+    walker.walk(saveDataListener(), tree)
+    codeGenerator()
+
+    
     #comentar para pruebas y descomentar para arbol
     
 

@@ -49,7 +49,12 @@ function_call: ID '(' (params += expr ( ',' params += expr)*)? ')';
 
 while_loop: WHILE expr LOOP expr POOL;
 
-primary: '(' expr ')' | ID | INTEGER | STRING | TRUE | FALSE;
+primary: '(' expr ')' 
+	| ID 
+	| INTEGER  
+	| STRING 
+	| TRUE 
+	| FALSE;
 
 fragment A: [aA];
 fragment B: [bB];

@@ -6,6 +6,9 @@ import unittest
 
 
 _allClasses = {}
+_allStrings = []
+_allInts = []
+_allBool = []
 
 
 class HierarchyException(Exception):
