@@ -7,6 +7,7 @@ from listeners.tree import TreePrinter
 from listeners.type import typeListener
 from listeners.saveData import saveDataListener
 from listeners.codegen import codeGenerator
+from listeners.dataCreator import dataCreatorListener
 
 def compile(file):
     parser = coolParser(CommonTokenStream(coolLexer(FileStream(file))))
@@ -16,7 +17,8 @@ def compile(file):
     #walker.walk(TreePrinter(), tree)
     #comentar para arbol y descomentar para pruebas
     walker.walk(typeListener(), tree)
-    walker.walk(semanticListener(), tree)
+    #walker.walk(semanticListener(), tree)
+    walker.walk(dataCreatorListener(), tree)
     walker.walk(saveDataListener(), tree)
     codeGenerator()
 
@@ -31,4 +33,4 @@ def dummy():
 
 
 if __name__ == '__main__':
-    compile('resources/semantic/input/cells.cool')
+    compile('resources/codegen/input/fibo.cool')

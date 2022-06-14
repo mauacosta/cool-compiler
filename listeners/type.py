@@ -79,7 +79,7 @@ class typeListener(coolListener):
             pass
         self.currentKlass.addMethod(methodID, self.currentMethod)
 
-    def exitKlass(self, ctx: coolParser.KlassContext):
+    def exitProgram(self, ctx: coolParser.KlassContext):
         if (not self.main):
             raise nomain()
         self.currentKlass = None

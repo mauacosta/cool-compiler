@@ -3,27 +3,29 @@ from util.structure import _allInts, _allStrings, _allClasses
 import listeners.aTemplates as aTemplates
 import math
 
-globalInheritance = []
+
 codeAssemblyOutput = ""
-def auxDispTable(nameOfClass):
+def auxTable(nameOfClass, globalInheritance):
     #get class from name
     klass = lookupClass(nameOfClass)
     if klass.inherits != 'Object':
-        globalInheritance.append(nameOfClass)
-        auxDispTable(klass.inherits)
-    if klass.inherits == 'Object':
-        return 
+        globalInheritance = auxTable(klass.inherits, globalInheritance)
+        globalInheritance.insert(0, nameOfClass)
+    if klass.inherits == 'Object' and nameOfClass != 'Object':
+        globalInheritance.insert(0, nameOfClass)
+    return globalInheritance
      
     
 def dispTable(): 
     temp = ""
     for singleClass in _allClasses:
-        globalInheritance = []
-        auxDispTable(singleClass)
+        temp += singleClass + "_dispTab:\n"
+        globalInheritance = auxTable(singleClass, ['Object'])
+        #print(singleClass + ": " + str(globalInheritance))
         for index in range (len(globalInheritance)-1,-1,-1):
             actualKlass = lookupClass(globalInheritance[index])
             for method in actualKlass.methods:
-                temp  += "     .word    " + actualKlass.name +"."+method.name + "\n"
+                temp  += "       .word    " +globalInheritance[index] +"."+method + "\n"
     return temp
 
 def previousTable():
@@ -31,39 +33,43 @@ def previousTable():
     objectIndex = _allStrings.index('Object')
     temp = "class_nameTab: \n"
     for index in range(objectIndex, len(_allStrings)-1):
-        temp += "    .word    str_const" + str(index) + "\n"
+        temp += "       .word    str_const" + str(index) + "\n"
 
     temp  += "class_objTab: \n"
     for singleClass in _allClasses:
-        temp  += "    .word    " + str(singleClass) + "_protObj \n"
-        temp += "    .word    " + str(singleClass) + "_init \n"
+        temp  += "       .word    " + str(singleClass) + "_protObj \n"
+        temp += "       .word    " + str(singleClass) + "_init \n"
     return temp
 
 
 def protObject():
     # create Object_protObj
     i = 0
+    temp = ""
     for singleClass in _allClasses:
-        temp = ""
-        temp += "    .word    -1 \n"
+        print(singleClass)
         temp += str(singleClass) + "_protObj: \n"
-        temp  += "     .word    "+str(i)+" \n"
+        temp  += "\t.word    "+str(i)+" \n"
         actualKlass = lookupClass(singleClass)
-        size =len(actualKlass.attributes)
-        temp += "     .word    "+str(size)+"\n"
-        temp  += "     .word    "+str(singleClass)+"dispTab\n"
+        size = len(actualKlass.attributes)
+        if actualKlass.inherits:
+            size += len(lookupClass(singleClass).attributes)
+        temp += "\t.word    "+str(size)+"\n"
+        temp  += "\t.word    "+str(singleClass)+"dispTab\n"
         if size > 3:
-            for attribute in actualKlass.attributes:
-                if attribute == "Int":
-                    temp += "     .word    str_const"+str(len(_allStrings)-1) + "\n"
-                elif attribute == "String":
-                    temp  += "     .word    int_const0 \n"
+            for att in actualKlass.attributes:
+                if att == "Int":
+                    temp += "\t.word    str_const"+str(len(_allStrings)-1) + "\n"
+                elif att == "String":
+                    temp  += "\t.word    int_const0 \n"
                 else:
-                    temp  += "     .word    0 \n"
+                    temp  += "\t.word    0 \n"
+        temp  += "\t.word    -1\n"
         i +=1
-        return temp
+    return temp
 
 def codeGenerator():
+
     codeAssemblyOutput = ""
     codeAssemblyOutput += str(aTemplates.globalData)
     #string, int, bool const
@@ -81,16 +87,15 @@ def codeGenerator():
         codeAssemblyOutput += aTemplates.stringConst.substitute(index=i, size=size, intIndex =index ,value=_allStrings[i])
     for i in range(len(_allInts) -1,-1,-1):
         codeAssemblyOutput += str(aTemplates.intConst.substitute(index=i, value=_allInts[i]))
-    codeAssemblyOutput += str(aTemplates.boolConst)
+    codeAssemblyOutput += str(aTemplates.boolConst.substitute())
     codeAssemblyOutput += previousTable()
-    codeAssemblyOutput +=dispTable()
-    codeAssemblyOutput +=protObject()
-    codeAssemblyOutput +=str(aTemplates.heap)
-    codeAssemblyOutput +=str(aTemplates.objInit)
-    codeAssemblyOutput +=str(aTemplates.iOInit)
-    codeAssemblyOutput +=str(aTemplates.intInit)
-    codeAssemblyOutput +=str(aTemplates.boolInit)
-    codeAssemblyOutput +=str(aTemplates.stringInit)
-    codeAssemblyOutput +=str(aTemplates.mainInit)
+    codeAssemblyOutput += dispTable()
+    codeAssemblyOutput += protObject()
+    codeAssemblyOutput +=str(aTemplates.heap.substitute())
+    codeAssemblyOutput +=str(aTemplates.objInit.substitute())
+    for singleClass in _allClasses:
+        actualKlass = lookupClass(singleClass)
+        codeAssemblyOutput += str(aTemplates.protInit.substitute(classInit = singleClass+"_init", jal=actualKlass.inherits+"_init"))
+    
+
     print(codeAssemblyOutput)
-    print("fin")

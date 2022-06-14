@@ -377,26 +377,39 @@ Mandar llamar a setBaseKlasses() para crear las declaraciones de las 5 clases b√
 
 
 def setBaseKlasses():
+    # add object methods and attributes
     k = Klass('Object')
     k.addMethod('abort', Method('Object'))
     k.addMethod('type_name', Method('Object'))
     k.addMethod('copy', Method('SELF_TYPE'))
+    _allClasses['Object'] = k
 
+    # add IO methods and attributes
     k = Klass('IO')
     k.addMethod('out_string', Method('SELF_TYPE', [('x', 'String')]))
     k.addMethod('out_int', Method('SELF_TYPE', [('x', 'Int')]))
     k.addMethod('in_string', Method('String'))
     k.addMethod('in_int', Method('Int'))
+    _allClasses['IO'] = k
 
+    # add Int methods and attributes
     k = Klass('Int')
+    k.addAttribute("value", "Object") 
+    _allClasses['Int'] = k
 
+    # add Bool methods and attributes
+    k = Klass('Bool')
+    k.addAttribute("value", "Object") 
+    _allClasses['Bool'] = k
+
+    # add String methods and attributes
     k = Klass('String')
+    k.addAttribute("size", "Int")
+    k.addAttribute("value", "Object") 
     k.addMethod('length', Method('Int'))
     k.addMethod('concat', Method('String', [('s', 'String')]))
     k.addMethod('substr', Method('String', [('i', 'Int'), ('l', 'Int')]))
-
-    k = Klass('Bool')
-
+    _allClasses['String'] = k
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

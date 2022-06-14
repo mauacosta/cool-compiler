@@ -114,10 +114,12 @@ class semanticListener(coolListener):
                 pass
 
             if self.currentMethodName == ctx.function_call().ID().getText():
-                raise badmethodcallsitself("a method can´t call iteself")            
+                raise badmethodcallsitself("a method can´t call iteself")      
+                 
             try:
-                attributeCaller = ctx.expr(0).getText() 
-                attributeType = self.currentKlass.lookupAttribute(attributeCaller)            
+                if ctx.expr(0): 
+                    attributeCaller = ctx.expr(0).getText() 
+                    attributeType = self.currentKlass.lookupAttribute(attributeCaller)            
             except KeyError:
                 pass
             
@@ -130,8 +132,6 @@ class semanticListener(coolListener):
             except:
                 pass
             
-            # if ctx.expr(0).TYPE():
-            hola = ctx.expr(0).getText()
 
             try:
                 if attributeCaller == 'self':
