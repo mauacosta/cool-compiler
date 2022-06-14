@@ -107,4 +107,12 @@ $classInit:
 	jr	$$ra 
 """)
 
-
+protEnterMethod= Template("""
+${className}.${methodName}:
+	addiu	$$sp $$sp -$ts 		# m: frame has $nLocal locals
+	sw	$$fp $fp ($$sp) 		# m: save $fp
+	sw	$$s0 ${s0}($$sp) 		# m: save $$s0 (self)
+	sw	$$ra ${ra}($$sp) 		# m: save $$ra
+	addiu	$$fp $$sp 4 		# m: $$fp points to locals
+	move	$$s0 $$a0 		# m: self to $$s0
+""")

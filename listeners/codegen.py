@@ -68,6 +68,20 @@ def protObject():
         i +=1
     return temp
 
+def methods():
+    temp = ""
+    for singleClass in _allClasses:
+        actualKlass = lookupClass(singleClass)
+        temp2=""
+        for method in actualKlass.methods:
+            actualMethod = actualKlass.lookupMethod(method)
+            #Get number of locals
+            nLocals = 0
+            ts = (3+nLocals)*4 #3+ nLocals * 4
+            temp2 += str(aTemplates.protEnterMethod.substitute(className= singleClass, methodName = method,ts=ts, fp=ts, s0=ts-4, ra=ts-8, nLocal=nLocals))
+        temp = temp2 + temp
+    return temp
+
 def codeGenerator():
 
     codeAssemblyOutput = ""
@@ -96,6 +110,6 @@ def codeGenerator():
     for singleClass in _allClasses:
         actualKlass = lookupClass(singleClass)
         codeAssemblyOutput += str(aTemplates.protInit.substitute(classInit = singleClass+"_init", jal=actualKlass.inherits+"_init"))
-    
+    codeAssemblyOutput +=methods()
 
     print(codeAssemblyOutput)

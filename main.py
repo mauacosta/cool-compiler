@@ -17,7 +17,7 @@ def compile(file):
     #walker.walk(TreePrinter(), tree)
     #comentar para arbol y descomentar para pruebas
     walker.walk(typeListener(), tree)
-    #walker.walk(semanticListener(), tree)
+    walker.walk(semanticListener(), tree)
     walker.walk(dataCreatorListener(), tree)
     walker.walk(saveDataListener(), tree)
     codeGenerator()
